@@ -1,0 +1,16 @@
+# Quartus synthesis artifacts
+db/
+incremental_db/
+output_files/
+simulation/
+*.rpt
+*.smsg
+*.summary
+*.pin
+*.sof
+*.pof
+*.jdi
+*.qws
+*.qdf
+*.bak
+*.orig
