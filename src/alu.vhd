@@ -3,13 +3,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 -- ALU combinacional
--- alu_op:
---   000 ADD
---   001 SUB
---   010 AND
---   011 OR
---   100 pass-A (LDA)
--- La logica completa se implementa en Semana 2.
+-- alu_op: 000=ADD  001=SUB  010=AND  011=OR  1xx=pass-A (LDA/STA)
 
 entity alu is
     port(
@@ -24,8 +18,20 @@ end entity;
 architecture rtl of alu is
     signal r : std_logic_vector(7 downto 0);
 begin
-    -- Stub Semana 1: pass-A para que la sintesis sea limpia.
-    r <= op_a;
+    process(op_a, op_b, alu_op)
+        variable a, b, sum : unsigned(8 downto 0);
+    begin
+        a := '0' & unsigned(op_a);
+        b := '0' & unsigned(op_b);
+        case alu_op is
+            when "000"  => sum := a + b;                          -- ADD
+            when "001"  => sum := a - b;                          -- SUB
+            when "010"  => sum := '0' & (unsigned(op_a) and unsigned(op_b));  -- AND
+            when "011"  => sum := '0' & (unsigned(op_a) or  unsigned(op_b));  -- OR
+            when others => sum := a;                               -- pass-A
+        end case;
+        r <= std_logic_vector(sum(7 downto 0));
+    end process;
 
     result    <= r;
     zero_flag <= '1' when r = x"00" else '0';
