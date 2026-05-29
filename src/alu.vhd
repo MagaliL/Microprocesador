@@ -28,6 +28,7 @@ begin
             when "001"  => sum := a - b;                          -- SUB
             when "010"  => sum := '0' & (unsigned(op_a) and unsigned(op_b));  -- AND
             when "011"  => sum := '0' & (unsigned(op_a) or  unsigned(op_b));  -- OR
+            when "100"  => sum := b;                               -- pass-B (LDA: ACC <- MEM[addr])
             when others => sum := a;                               -- pass-A
         end case;
         r <= std_logic_vector(sum(7 downto 0));

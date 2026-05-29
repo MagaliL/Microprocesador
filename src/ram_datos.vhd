@@ -25,7 +25,11 @@ end entity;
 
 architecture rtl of ram_datos is
     type mem_t is array (0 to 255) of std_logic_vector(7 downto 0);
-    signal mem      : mem_t := (others => (others => '0'));
+    signal mem      : mem_t := (
+        16#20# => x"0F",
+        16#21# => x"05",
+        others => (others => '0')
+    );
     signal led_reg  : std_logic_vector(7 downto 0) := (others => '0');
     signal hex_reg  : std_logic_vector(7 downto 0) := (others => '0');
     signal addr_int : integer range 0 to 255;

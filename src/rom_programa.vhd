@@ -22,16 +22,42 @@ end entity;
 architecture rtl of rom_programa is
     type rom_t is array (0 to 255) of std_logic_vector(15 downto 0);
 
-    -- Programa de prueba minimo:
-    --   0: LDA 0x10   ; ACC <- MEM[0x10]
-    --   1: ADD 0x11   ; ACC <- ACC + MEM[0x11]
-    --   2: STA 0xF0   ; LEDR <- ACC
-    --   3: JMP 0x00   ; loop
+    -- Programa de prueba completo (ejercita las 8 instrucciones ISA):
+    -- Datos en RAM: MEM[0x20]=0x0F, MEM[0x21]=0x05
+    --
+    -- 0x00: LDA 0x20  ; ACC = 0x0F
+    -- 0x01: ADD 0x21  ; ACC = 0x0F + 0x05 = 0x14  -> LEDR muestra 0x14
+    -- 0x02: STA 0xF0  ; LEDR = 0x14
+    -- 0x03: LDA 0x20  ; ACC = 0x0F
+    -- 0x04: SUB 0x21  ; ACC = 0x0F - 0x05 = 0x0A  -> LEDR muestra 0x0A
+    -- 0x05: STA 0xF0  ; LEDR = 0x0A
+    -- 0x06: LDA 0x20  ; ACC = 0x0F
+    -- 0x07: AND 0x21  ; ACC = 0x0F & 0x05 = 0x05  -> LEDR muestra 0x05
+    -- 0x08: STA 0xF0  ; LEDR = 0x05
+    -- 0x09: LDA 0x20  ; ACC = 0x0F
+    -- 0x0A: OR  0x21  ; ACC = 0x0F | 0x05 = 0x0F  -> LEDR muestra 0x0F
+    -- 0x0B: STA 0xF0  ; LEDR = 0x0F
+    -- 0x0C: LDA 0x20  ; ACC = 0x0F
+    -- 0x0D: SUB 0x20  ; ACC = 0x0F - 0x0F = 0x00  (zero_flag=1)
+    -- 0x0E: JZ  0x00  ; ACC=0 -> salta a 0x00 (loop)
+    -- 0x0F: JMP 0x00  ; seguridad (no debe alcanzarse)
     constant ROM : rom_t := (
-        0      => x"0100",  -- LDA 0x10
-        1      => x"2110",  -- ADD 0x11
+        0      => x"0200",  -- LDA 0x20
+        1      => x"2210",  -- ADD 0x21
         2      => x"1F00",  -- STA 0xF0
-        3      => x"6000",  -- JMP 0x00
+        3      => x"0200",  -- LDA 0x20
+        4      => x"3210",  -- SUB 0x21
+        5      => x"1F00",  -- STA 0xF0
+        6      => x"0200",  -- LDA 0x20
+        7      => x"4210",  -- AND 0x21
+        8      => x"1F00",  -- STA 0xF0
+        9      => x"0200",  -- LDA 0x20
+        10     => x"5210",  -- OR  0x21
+        11     => x"1F00",  -- STA 0xF0
+        12     => x"0200",  -- LDA 0x20
+        13     => x"3200",  -- SUB 0x20  (ACC = 0)
+        14     => x"7000",  -- JZ  0x00
+        15     => x"6000",  -- JMP 0x00
         others => x"0000"
     );
 begin
